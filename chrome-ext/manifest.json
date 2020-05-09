@@ -13,14 +13,10 @@
     ],
     "persistent": false
   },
-  "page_action": {
+  "browser_action": {
+    "default_icon": "src/assets/football.png",
     "default_popup": "src/html/popup.html",
-    "default_icon": {
-      "16": "src/assets/football.png",
-      "32": "src/assets/football.png",
-      "48": "src/assets/football.png",
-      "128": "src/assets/football.png"
-    }
+    "default_title": "Footy Chant Extension"
   },
   "icons": {
     "16": "src/assets/football.png",
@@ -28,9 +24,22 @@
     "48": "src/assets/football.png",
     "128": "src/assets/football.png"
   },
-  "content_scripts": [],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/",
+        "https://*/"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "js": [
+        "src/js/contentscript.js"
+      ]
+    }
+  ],
   "web_accessible_resources": [
-    "src/*/*"
+    "src/*/*",
+    "https://www.fanchants.com/*"
   ],
   "manifest_version": 2
 }

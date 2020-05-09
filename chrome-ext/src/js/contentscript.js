@@ -1,24 +1,15 @@
 /*
   Content script which injects the required js for webcam feed filters
 */
+var docEl = (document.head||document.documentElement);
+var getUserMediaOverload = document.createElement('script');
+var audio = chrome.runtime.getURL("src/assets/chant.mp3");
 
-function scriptFromFile(name) {
-  var script = document.createElement('script');
-  script.src = chrome.extension.getURL(name);
-  script.async = false;
-  return script;
-}
-
-function inject(scripts) {
-  if (scripts.length === 0)
-      return;
-  var script = scripts[0];
-  var otherScripts = scripts.slice(1);
-  var el = (document.head || document.documentElement)
-  el.appendChild(script);
-  inject(otherScripts);
-}
-
-inject([
-  scriptFromFile("") // Path to injected js script
-]);
+getUserMediaOverload.textContent = "\
+console.log('playing sounds');\
+var a = new Audio(\
+    '" + audio + "'\
+);\
+a.play();\
+";
+docEl.appendChild(getUserMediaOverload);
