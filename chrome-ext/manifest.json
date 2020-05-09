@@ -14,7 +14,7 @@
     "persistent": false
   },
   "page_action": {
-    "default_popup": "popup.html",
+    "default_popup": "src/html/popup.html",
     "default_icon": {
       "16": "src/assets/football.png",
       "32": "src/assets/football.png",
