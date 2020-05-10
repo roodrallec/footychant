@@ -10,7 +10,7 @@
     "default_title": "React Chrome Extension Starter"
   },
   "icons": {
-    "128": "./assets/icon.png"
+    "512": "./assets/football.png"
   },
   "content_scripts": [
     {
