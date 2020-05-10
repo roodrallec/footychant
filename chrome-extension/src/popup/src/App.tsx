@@ -77,7 +77,7 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(()=> {
-    if(teams) {
+    if(teams.length>0) {
       getState((state) => {
         console.log(state)
         setSoundState(state.audioState);
@@ -144,16 +144,17 @@ const App: React.FC = () => {
     }
   };
 
-  if(soundState === "loading") {
-    return <div className="App">Loading...</div>
-  }
-
   const startTeamChants = (team: Team) => {
     if(team) {
       startChants(team).then(started =>started && setTeam((team)))
     } else {
       pauseAudio()
     }
+  }
+
+
+  if(soundState === "loading") {
+    return <div className="App">Loading...</div>
   }
 
   return (
