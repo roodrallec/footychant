@@ -21,14 +21,18 @@ interface Team {
   chants: Chant[]
 }
 
+interface TabState {
+  audioState: AudioState,
+  currentTeam?: string
+}
 type AudioState = 'not_started' | 'playing' | 'paused';
 
-function getAudioState(callback: (state: AudioState) => void) {
-  console.log('Querying audio state');
+function getState(callback: (state: TabState) => void) {
+  console.log('Querying state');
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     chrome.tabs.sendMessage(
       tabs[0].id as number,
-      { action: 'getAudioState' },
+      { action: 'getState' },
       callback
     );
   });
@@ -63,26 +67,43 @@ async function sendToActiveTab(message: any):Promise<any> {
 
 const App: React.FC = () => {
   let [teams, setTeams] = useState<Team[]>([])
-  const [soundState, setSoundState] = useState('unknown');
+  const [soundState, setSoundState] = useState('loading');
   const [team, setTeam] = useState<Team>()
 
   useEffect(() => {
     loadTeams().then(teams=> {
       setTeams(teams.sort((a,b)=>a.name.localeCompare(b.name)))
     })
-    getAudioState((state) => {
-      setSoundState(state);
-    });
   }, []);
 
-
-  const startChants = (chants: Chant[]) => {
-    sendToActiveTab({ action: 'start', chants: chants.map(chant=>chant.url), loop: true })
-      .then(response => {
-        if(response) {
-          setSoundState('playing')
+  useEffect(()=> {
+    if(teams) {
+      getState((state) => {
+        console.log(state)
+        setSoundState(state.audioState);
+        if(teams) {
+          if(state.currentTeam) {
+            const team = teams.find(team=>team.name===state.currentTeam)
+            if(team) {
+              setTeam(team)
+            }
+          } else {
+            setTeam(undefined)
+          }
         }
-      })
+      });
+    }
+  }, [teams])
+
+
+  const startChants = async (team: Team) => {
+    const response = await sendToActiveTab({ action: 'start', chants: team.chants.map(chant=>chant.url), loop: true, team: team.name})
+    if(response) {
+      setSoundState('playing')
+      return true
+    } else {
+      return false
+    }
   }
 
   const pauseAudio = () => {
@@ -107,7 +128,7 @@ const App: React.FC = () => {
     switch (soundState) {
       case 'not_started': {
         if(team) {
-          startChants(team.chants)
+          startChants(team)
         }
         break;
       }
@@ -122,10 +143,22 @@ const App: React.FC = () => {
     }
   };
 
+  if(soundState === "loading") {
+    return <div className="App">Loading...</div>
+  }
+
+  const startTeamChants = (team: Team) => {
+    if(team) {
+      startChants(team).then(started =>started && setTeam((team)))
+    } else {
+      pauseAudio()
+    }
+  }
+
   return (
     <div className="App">
       {(teams.length>0 && !team) &&
-        <DropdownCombobox items={teams} onChange={(team:Team)=>setTeam(team)} />
+        <DropdownCombobox items={teams} onChange={(team:Team)=>startTeamChants(team)} />
       }
       {team && <div>
         <p>
