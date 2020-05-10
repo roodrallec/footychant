@@ -40,17 +40,16 @@ const App: React.FC = () => {
     });
   };
 
-  const loadChants = async (): Promise<Chant[]> => {
+  const loadChants = async (): Promise<void> => {
     console.log('loading chants');
     try {
       const response = await fetch(chantsUrl);
       const jsonChants = await response.json();
       console.log('chants loaded');
-      return chants.concat(jsonChants);
+      chants = chants.concat(jsonChants);
     }
     catch (err) {
       console.error(err);
-      return [];
     }
   }
 
