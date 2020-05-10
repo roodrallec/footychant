@@ -11,6 +11,6 @@ async function scrapeChantsFromPage(url) {
     return relativeUrls.map(el => baseUrl + el);
 }
 
-scrapeChantsFromPage("https://www.fanchants.com/football-team/borussia-dortmund/").then(
-    chants=> console.log(chants)
+scrapeChantsFromPage("https://www.fanchants.com/football-team/liverpool/").then(
+    chants=> console.log(JSON.stringify(chants))
 );

@@ -1,131 +1,145 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
+import {DropdownCombobox} from "./DropdownCombobox"
 
-const chantsUrl = chrome.runtime.getURL('assets/chants.json')
+const teamsUrl = chrome.runtime.getURL('assets/teams.json')
 const defaultChant = {
   name: 'General',
   icon: chrome.runtime.getURL('assets/football.png'),
   url: chrome.runtime.getURL('assets/chant.wav')
 };
 
-type Chant = {
+interface Chant {
   url: string
   icon: string
   name: string
 }
 
+interface Team {
+  name: string
+  country?: string
+  chants: Chant[]
+}
+
 type AudioState = 'not_started' | 'playing' | 'paused';
 
-let chants: Chant[] = [defaultChant];
+function getAudioState(callback: (state: AudioState) => void) {
+  console.log('Querying audio state');
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    chrome.tabs.sendMessage(
+      tabs[0].id as number,
+      { action: 'getAudioState' },
+      callback
+    );
+  });
+}
+
+async function loadTeams(): Promise<Team[]> {
+  try {
+    const response = await fetch(teamsUrl);
+    return await response.json();
+  }
+  catch (err) {
+    console.error(err);
+    return []
+  }
+}
+
+async function sendToActiveTab(message: any):Promise<any> {
+  return new Promise((resolve,reject) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (
+      tabs
+    ) {
+      chrome.tabs.sendMessage(
+        tabs[0].id as number,
+        message,
+        (response) => {
+          resolve(response);
+        }
+      );
+    });
+  })
+}
 
 const App: React.FC = () => {
+  let [teams, setTeams] = useState<Team[]>([])
   const [soundState, setSoundState] = useState('unknown');
+  const [team, setTeam] = useState<Team>()
 
   useEffect(() => {
-    loadChants();
+    loadTeams().then(teams=> {
+      setTeams(teams)
+    })
     getAudioState((state) => {
-      console.log(state);
       setSoundState(state);
     });
   }, []);
 
-  const getAudioState = (callback: (state: AudioState) => void) => {
-    console.log('Querying audio state');
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      chrome.tabs.sendMessage(
-        tabs[0].id as number,
-        { action: 'getAudioState' },
-        callback
-      );
-    });
-  };
 
-  const loadChants = async (): Promise<void> => {
-    console.log('loading chants');
-    try {
-      const response = await fetch(chantsUrl);
-      const jsonChants = await response.json();
-      console.log('chants loaded');
-      chants = chants.concat(jsonChants);
-    }
-    catch (err) {
-      console.error(err);
-    }
+  const startChants = (chants: Chant[]) => {
+    sendToActiveTab({ action: 'start', chants: chants.map(chant=>chant.url), loop: true })
+      .then(response => {
+        if(response) {
+          setSoundState('playing')
+        }
+      })
   }
 
-  const playChant = (chantUrls: string[]) => () => {
+  const pauseAudio = () => {
+    sendToActiveTab({ action: 'stop' })
+      .then(response => {
+        if(response) {
+          setSoundState('paused')
+        }
+      })
+  }
+
+  const continueAudio = () => {
+    sendToActiveTab({ action: 'start' })
+      .then(response => {
+        if(response) {
+          setSoundState('playing')
+        }
+      })
+  }
+
+  const handleButtonClick = () => {
     switch (soundState) {
       case 'not_started': {
-        chrome.tabs.query({ active: true, currentWindow: true }, function (
-          tabs
-        ) {
-          chrome.tabs.sendMessage(
-            tabs[0].id as number,
-            { action: 'start', chants: chantUrls, loop: true },
-            (response) => {
-              if (response === 'ok') {
-                setSoundState('playing');
-              }
-            }
-          );
-        });
+        if(team) {
+          startChants(team.chants)
+        }
         break;
       }
       case 'paused': {
-        chrome.tabs.query({ active: true, currentWindow: true }, function (
-          tabs
-        ) {
-          chrome.tabs.sendMessage(
-            tabs[0].id as number,
-            { action: 'start', chants: chantUrls, loop: true },
-            (response) => {
-              if (response === 'ok') {
-                setSoundState('playing');
-              }
-            }
-          );
-        });
+        continueAudio();
         break;
       }
       case 'playing': {
-        chrome.tabs.query({ active: true, currentWindow: true }, function (
-          tabs
-        ) {
-          chrome.tabs.sendMessage(
-            tabs[0].id as number,
-            { action: 'stop' },
-            (response) => {
-              if (response === 'ok') {
-                setSoundState('paused');
-              }
-            }
-          );
-        });
+        pauseAudio()
         break;
       }
     }
   };
-  const chantIcon = (url: string) => ({
-    background: 'url(' + url + ')',
-  });
 
   return (
     <div className="App">
-      <table>
-        <tbody>
-        {chants.map(({ name, icon, url }) => (
-          <tr>
-            <td><span style={chantIcon(icon)}></span></td>
-            <td><p>{name}</p></td>
-            <td><button onClick={playChant([url])}>
-              {soundState === 'not_started' || soundState === 'paused'
-                ? 'Play'
-                : 'Stop'}
-            </button></td>
-          </tr>
-        ))}
-        </tbody>
-      </table>
+      {(teams && !team) &&
+        <DropdownCombobox items={teams} onChange={(team:Team)=>setTeam(team)} />
+      }
+      {team && <div>
+        <p>
+          <strong>Selected team: </strong>
+          <span>{team.name}</span>
+        </p>
+        <button onClick={()=>setTeam(undefined)}>Change team</button>
+      </div>
+      }
+      <button onClick={handleButtonClick}>
+        {soundState === 'not_started' || soundState === 'paused'
+          ? 'Play'
+          : 'Stop'}
+      </button>
     </div>
   );
 };
