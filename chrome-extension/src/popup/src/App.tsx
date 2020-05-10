@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 
-const chantsUrl = "https://raw.githubusercontent.com/roodrallec/footychant/chrome-ext/chants.json?token=ACCMVQB5UTCEK4343VRGWJS6YFAUW";
+const chantsUrl = chrome.runtime.getURL('assets/chants.json')
 const defaultChant = {
   name: 'General',
-  icon: 'https://lh3.googleusercontent.com/proxy/nxDF_ARO0K--S_fIwxqpjYSQAgflfn0u067d9vkTru914w7-5yXHCyu4XbBsbmdWlPPlbYRqUFVGq-nzHNesZCKwI1TnWQ_Kj7jENdN73WzuGZDeEeDeJOnGIuRM6CCDRGapLUBXh7zHJn8JyjCJsQ',
-  url: chrome.runtime.getURL('./assets/chant.wav')
+  icon: chrome.runtime.getURL('assets/football.png'),
+  url: chrome.runtime.getURL('assets/chant.wav')
 };
 
 type Chant = {
@@ -106,7 +106,7 @@ const App: React.FC = () => {
     }
   };
   const chantIcon = (url: string) => ({
-    backgroundImage: 'url(' + url + ')',
+    background: 'url(' + url + ')',
   });
 
   return (
