@@ -2,11 +2,6 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 
 const chantsUrl = chrome.runtime.getURL('assets/chants.json')
-const defaultChant = {
-  name: 'General',
-  icon: chrome.runtime.getURL('assets/football.png'),
-  url: chrome.runtime.getURL('assets/chant.wav')
-};
 
 type Chant = {
   url: string
@@ -16,7 +11,7 @@ type Chant = {
 
 type AudioState = 'not_started' | 'playing' | 'paused';
 
-let chants: Chant[] = [defaultChant];
+let chants: Chant[] = [];
 
 const App: React.FC = () => {
   const [soundState, setSoundState] = useState('unknown');
@@ -105,27 +100,14 @@ const App: React.FC = () => {
       }
     }
   };
-  const chantIcon = (url: string) => ({
-    background: 'url(' + url + ')',
-  });
 
   return (
     <div className="App">
-      <table>
-        <tbody>
-        {chants.map(({ name, icon, url }) => (
-          <tr>
-            <td><span style={chantIcon(icon)}></span></td>
-            <td><p>{name}</p></td>
-            <td><button onClick={playChant([url])}>
-              {soundState === 'not_started' || soundState === 'paused'
-                ? 'Play'
-                : 'Stop'}
-            </button></td>
-          </tr>
-        ))}
-        </tbody>
-      </table>
+      <button onClick={playChant(chants.map(c => c.url))}>
+          {soundState === 'not_started' || soundState === 'paused'
+            ? 'Play'
+            : 'Stop'}
+      </button>
     </div>
   );
 };
