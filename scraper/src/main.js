@@ -22,7 +22,7 @@ async function scrapeChantsFromPage(url) {
 async function scrapeChantsFromLeague(leagueUrl) {
     const html = await axios.get(leagueUrl);
     const page = $.load(html.data);
-    const chantContainers = page('a');
+    const chantContainers = page('tbody > tr > td > a');
     return chantContainers.map(function(el,i) {
         return $(this).attr("href")
     }).get().filter(url => url.includes("/football-team/"));
