@@ -3,3 +3,5 @@ node_modules
 .vscode
 data
 .ipynb_checkpoints
+node_modules/
+/.idea
