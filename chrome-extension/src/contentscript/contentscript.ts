@@ -26,9 +26,9 @@ function getRandomInt(max: number) {
 
 function updateChants(chantUrls: string[] = [], team: string) {
   mxChants = chantUrls;
-  if (mxContainer || mxChants.length == 0 || !team) return;
-
   currentTeam = team;
+  if (mxContainer || mxChants.length == 0) return;
+
   mxChant = mxChants[getRandomInt(mxChants.length)];
   mxContainer = new Audio(mxChant);
   mxContainer.volume = 0;
@@ -84,6 +84,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (bgContainer.paused) {
           sendResponse({audioState: 'paused', currentTeam: currentTeam});
         } else {
+          console.log({audioState:'playing', currentTeam: currentTeam})
           sendResponse({audioState:'playing', currentTeam: currentTeam});
         }
       } else {

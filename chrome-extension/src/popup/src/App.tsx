@@ -97,6 +97,7 @@ const App: React.FC = () => {
 
 
   const startChants = async (team: Team) => {
+    console.log(team)
     const response = await sendToActiveTab({ action: 'start', chants: team.chants.map(chant=>chant.url), loop: true, team: team.name})
     if(response) {
       setSoundState('playing')
