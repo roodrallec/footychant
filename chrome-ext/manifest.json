@@ -7,12 +7,7 @@
     "storage",
     "declarativeContent"
   ],
-  "background": {
-    "scripts": [
-      "src/js/background.js"
-    ],
-    "persistent": false
-  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "browser_action": {
     "default_icon": "src/assets/football.png",
     "default_popup": "src/html/popup.html",
@@ -30,7 +25,6 @@
         "http://*/",
         "https://*/"
       ],
-      "run_at": "document_start",
       "all_frames": true,
       "js": [
         "src/js/contentscript.js"
