@@ -1,89 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 
-const dortmundChants = [
-  'https://www.fanchants.com/media/chants/full/download/borussia-dortmund-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/always-there-for-you-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/allez-21-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/dortmund-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/wer-wird-deutscher-meister-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/shala-la-la-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/auf-gehts-schwarz-gelbe-jungs-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/jetzt-stehen-wir-hier-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/europapokal-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/bvb-bvb-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/heja-bvb-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/derby-victory-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/bvb-ole-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/come-on-dortmund-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/am-tag-als-der-fc-schalke-starb-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/bdortmund-chant-2-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/leuchtturm-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/wir-lieben-dich-so-sehr-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/and-if-you-win-the-game-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/allez-allez-oh-bvb-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/ruhrpott-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/allez-borussia-dortmund-allez-allez-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/ole-ole-borussia-dortmund-bvb-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/heja-bvb-bvb-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/borussia-song-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/bdortmund-chant-3-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/borussia-dortmund-chant-5-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/bdortmund-chant-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/b-dortmund-7-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/ours-2-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/sons-of-btches-2-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/karlsruhe-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/lucas-barrios-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/bv-borussia-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/boys-from-dortmund-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/dort-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/bvb-bvb-bvb-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_02_b_f-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/walk-on-bvb-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_02_h_f-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/allez-bvb-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_03_b_f-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/you-beautiful-bvb-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_05_e_f-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/berlin-5-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_06_d_f-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/fight-20-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_07_b_f-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/goal-32-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/borussia-borussia-borussia-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/hey-23-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/shalala-borussia-bvb-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/gelsenkirchen-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_02_d_f-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/s04-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_02_i_f-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/la-la-la-7-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_05_a_f-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_06_e_f-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/tier-6-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_07_e_f-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/allez-borussia-bvb-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/shalalalala-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/bbb-vvv-bbb-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_02_a_f-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_02_g_f-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/ballsportclub-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_05_d_f-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/here-reigns-19-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_05_h_f-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/international-2-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_07_a_f-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/jump-12-fanchants-free.mp3',
-  'https://www.fanchants.com/media/chants/full/download/190809_07_f_f-fanchants-free.mp3',
-];
+const chantsUrl = "https://drive.google.com/u/0/uc?id=1egQNfvMbg2EiUTM-zhIzgMlp6N839eN0&export=download";
+const defaultChant = {
+  name: 'General',
+  icon: 'https://lh3.googleusercontent.com/proxy/nxDF_ARO0K--S_fIwxqpjYSQAgflfn0u067d9vkTru914w7-5yXHCyu4XbBsbmdWlPPlbYRqUFVGq-nzHNesZCKwI1TnWQ_Kj7jENdN73WzuGZDeEeDeJOnGIuRM6CCDRGapLUBXh7zHJn8JyjCJsQ',
+  url: chrome.runtime.getURL('./assets/chant.wav')
+};
+
+type Chant = {
+  url: string
+  icon: string
+  name: string
+}
 
 type AudioState = 'not_started' | 'playing' | 'paused';
 
 const App: React.FC = () => {
+  let chants: Chant[] = [defaultChant];
+
   const [soundState, setSoundState] = useState('unknown');
 
   useEffect(() => {
+    loadChants();
     getAudioState((state) => {
       console.log(state);
       setSoundState(state);
@@ -101,7 +40,19 @@ const App: React.FC = () => {
     });
   };
 
-  const playChant = () => {
+  const loadChants = async (): Promise<Chant[]> => {
+    try {
+      const response = await fetch(chantsUrl);
+      const jsonChants = await response.json();
+      return chants.concat(jsonChants);
+    }
+    catch (err) {
+      console.error(err);
+      return [];
+    }
+  }
+
+  const playChant = (chantUrls: string[]) => () => {
     switch (soundState) {
       case 'not_started': {
         chrome.tabs.query({ active: true, currentWindow: true }, function (
@@ -109,7 +60,7 @@ const App: React.FC = () => {
         ) {
           chrome.tabs.sendMessage(
             tabs[0].id as number,
-            { action: 'start', chants: dortmundChants },
+            { action: 'start', chants: chantUrls, loop: true },
             (response) => {
               if (response === 'ok') {
                 setSoundState('playing');
@@ -125,7 +76,7 @@ const App: React.FC = () => {
         ) {
           chrome.tabs.sendMessage(
             tabs[0].id as number,
-            { action: 'start' },
+            { action: 'start', chants: chantUrls, loop: true },
             (response) => {
               if (response === 'ok') {
                 setSoundState('playing');
@@ -153,16 +104,25 @@ const App: React.FC = () => {
       }
     }
   };
+  const chantIcon = (url: string) => ({
+    backgroundImage: 'url(' + url + ')',
+  });
 
   return (
     <div className="App">
-      {soundState !== 'unknown' && (
-        <button onClick={playChant}>
-          {soundState === 'not_started' || soundState === 'paused'
-            ? 'Play'
-            : 'Stop'}
-        </button>
-      )}
+      <table>
+        {chants.map(({ name, icon, url }) => (
+          <tr>
+            <td><span style={chantIcon(icon)}></span></td>
+            <td><p>{name}</p></td>
+            <td><button onClick={playChant([url])}>
+              {soundState === 'not_started' || soundState === 'paused'
+                ? 'Play'
+                : 'Stop'}
+            </button></td>
+          </tr>
+        ))}
+      </table>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 let audioContainer;
-
+let currentChant;
+let loop;
 let chants = [];
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -8,12 +9,16 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     case 'start': {
       if (request.chants) {
         chants = request.chants;
-        audioContainer = new Audio(chants.pop());
+        loop = request.loop;
+        currentChant = chants.shift();
+        audioContainer = new Audio(currentChant);
         document.body.appendChild(audioContainer);
         audioContainer.play();
         audioContainer.onended = () => {
+          if (loop && currentChant) chants.push(currentChant);
           if (chants.length > 0) {
-            audioContainer.src = chants.pop();
+            currentChant = chants.shift();
+            audioContainer.src = currentChant;
             audioContainer.play();
           }
         };
