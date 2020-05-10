@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 
-const chantsUrl = "https://drive.google.com/u/0/uc?id=1egQNfvMbg2EiUTM-zhIzgMlp6N839eN0&export=download";
+const chantsUrl = "https://raw.githubusercontent.com/roodrallec/footychant/chrome-ext/chants.json?token=ACCMVQB5UTCEK4343VRGWJS6YFAUW";
 const defaultChant = {
   name: 'General',
   icon: 'https://lh3.googleusercontent.com/proxy/nxDF_ARO0K--S_fIwxqpjYSQAgflfn0u067d9vkTru914w7-5yXHCyu4XbBsbmdWlPPlbYRqUFVGq-nzHNesZCKwI1TnWQ_Kj7jENdN73WzuGZDeEeDeJOnGIuRM6CCDRGapLUBXh7zHJn8JyjCJsQ',
@@ -41,9 +41,11 @@ const App: React.FC = () => {
   };
 
   const loadChants = async (): Promise<Chant[]> => {
+    console.log('loading chants');
     try {
       const response = await fetch(chantsUrl);
       const jsonChants = await response.json();
+      console.log('chants loaded');
       return chants.concat(jsonChants);
     }
     catch (err) {
@@ -111,6 +113,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <table>
+        <tbody>
         {chants.map(({ name, icon, url }) => (
           <tr>
             <td><span style={chantIcon(icon)}></span></td>
@@ -122,6 +125,7 @@ const App: React.FC = () => {
             </button></td>
           </tr>
         ))}
+        </tbody>
       </table>
     </div>
   );
