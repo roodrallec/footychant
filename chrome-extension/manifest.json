@@ -4,7 +4,9 @@
   "short_name": "Footy Chants",
   "version": "0.0.1",
   "description": "Listen to your favorite football chants while watching football.",
-  "permissions": ["activeTab"],
+  "permissions": [
+    "activeTab"
+  ],
   "browser_action": {
     "default_popup": "popup/index.html",
     "default_title": "Footy Chants"
@@ -14,18 +16,23 @@
   },
   "content_scripts": [
     {
-      "js": ["contentscript.js"],
-      "matches": ["<all_urls>"]
+      "js": [
+        "contentscript.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
   "background": {
-    "scripts": ["background.js"],
+    "scripts": [
+      "background.js"
+    ],
     "persistent": false
   },
   "content_security_policy": "script-src 'self' 'unsafe-eval' 'sha256-...='; object-src 'self'; media-src 'https://www.fanchants.com/';",
   "web_accessible_resources": [
     "https://www.fanchants.com/media/chants/full/download/*",
-    "assets/chant.wav",
-    "chrome-extension://*"
+    "assets/chant.wav"
   ]
 }
