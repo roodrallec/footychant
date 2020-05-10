@@ -75,7 +75,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       break;
     }
     case 'getAudioState': {
-      if (bgContainer) {
+      if (bgContainer && mxChants.length>0) {
         if (bgContainer.paused) {
           sendResponse('paused');
         } else {

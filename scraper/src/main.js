@@ -1,5 +1,6 @@
 const axios = require('axios');
 const $ = require('cheerio');
+const fs = require('fs')
 const baseUrl = "https://www.fanchants.com";
 const leagues = [
     "/football-league/german-bundesliga-1/",
@@ -13,8 +14,9 @@ async function scrapeChantsFromPage(url) {
     const html = await axios.get(url);
     const page = $.load(html.data);
     const chantContainers = page('#all-chants [data-has-audio=True] .play-button');
+    const name = page('#pjax-container > div > div:nth-child(3) > div > section > h2').text().replace("Fan's Songs", "").trim();
     const relativeUrls = chantContainers.map(function(el,i) {return $(this).attr("href")}).get();
-    return relativeUrls.map(el => baseUrl + el);
+    return [name, relativeUrls.map(el => baseUrl + el)];
 }
 
 async function scrapeChantsFromLeague(leagueUrl) {
@@ -28,15 +30,22 @@ async function scrapeChantsFromLeague(leagueUrl) {
 
 async function scrapeAllLeagues() {
     const data = {};
+    const teams = [];
     await Promise.all(leagues.map(async league => {
         data[league] = {};
         const teamUrls = await scrapeChantsFromLeague(baseUrl + league);
         await Promise.all(teamUrls.map(async teamUrl => {
-            let chants = await scrapeChantsFromPage(baseUrl + teamUrl);
+            let [name, chants] = await scrapeChantsFromPage(baseUrl + teamUrl);
             data[league][teamUrl] = chants;
+            teams.push({name, chants: chants.map(chant=>({name:"",url:chant,icon:""}))});
         }));
     }));
     console.log(JSON.stringify(data));
+    fs.writeFile("../../chrome-extension/src/assets/teams.json", JSON.stringify(teams), err => {
+        if (err) {
+            console.error(err)
+        }
+    })
 }
 
 scrapeAllLeagues();
