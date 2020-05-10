@@ -68,7 +68,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     loadTeams().then(teams=> {
-      setTeams(teams)
+      setTeams(teams.sort((a,b)=>a.name.localeCompare(b.name)))
     })
     getAudioState((state) => {
       setSoundState(state);
@@ -124,7 +124,7 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      {(teams && !team) &&
+      {(teams.length>0 && !team) &&
         <DropdownCombobox items={teams} onChange={(team:Team)=>setTeam(team)} />
       }
       {team && <div>

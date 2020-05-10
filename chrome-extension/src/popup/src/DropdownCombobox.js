@@ -17,6 +17,7 @@ export function DropdownCombobox({items, onChange}) {
   } = useCombobox({
     items: inputItems,
     initialInputValue: "",
+    initialIsOpen: true,
     onInputValueChange: ({inputValue}) => {
       setInputItems(
         items.filter(item =>
