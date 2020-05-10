@@ -16,9 +16,9 @@ type Chant = {
 
 type AudioState = 'not_started' | 'playing' | 'paused';
 
-const App: React.FC = () => {
-  let chants: Chant[] = [defaultChant];
+let chants: Chant[] = [defaultChant];
 
+const App: React.FC = () => {
   const [soundState, setSoundState] = useState('unknown');
 
   useEffect(() => {
