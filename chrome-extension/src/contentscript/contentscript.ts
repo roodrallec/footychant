@@ -6,19 +6,25 @@ let mxChant; // Var to store currently playing mix chant
 let mxChants = []; // Array of all mix chants
 let mxContainer; // Mix chant audio container
 let mxContainerVol; // Volume for mix chant audio
+let bgContainer;
 let bgChant = chrome.runtime.getURL('assets/chant.wav'); // Background chant audio
-let bgContainer = new Audio(bgChant); // Background chant audio container
 let currentTeam = undefined;
 
-bgContainer.volume = bgVolume;
-document.body.appendChild(bgContainer);
-bgContainer.addEventListener('timeupdate', function () {
-  if (this.currentTime > this.duration - 0.5) {
-    //Prevents gap in audio loop
-    this.currentTime = 0;
-    this.play();
+function startBgContainer() {
+  if (!bgContainer) {
+    bgContainer = new Audio(bgChant); // Background chant audio container
+    bgContainer.volume = bgVolume;
+    document.body.appendChild(bgContainer);
+    bgContainer.addEventListener('timeupdate', function () {
+      if (this.currentTime > this.duration - 0.5) {
+        //Prevents gap in audio loop
+        this.currentTime = 0;
+        this.play();
+      }
+    });
   }
-});
+  bgContainer.play();
+}
 
 function getRandomInt(max: number) {
   return Math.floor(Math.random() * Math.floor(max));
@@ -63,7 +69,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   console.log(request);
   switch (request.action) {
     case 'start': {
-      if (bgContainer && bgContainer.paused) bgContainer.play();
+      startBgContainer();
       if (request.chants) {
         updateChants(request.chants, request.team);
         sendResponse('ok');
