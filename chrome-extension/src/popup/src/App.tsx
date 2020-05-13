@@ -3,11 +3,6 @@ import './App.css';
 import {DropdownCombobox} from "./DropdownCombobox"
 
 const teamsUrl = chrome.runtime.getURL('assets/teams.json')
-const defaultChant = {
-  name: 'General',
-  icon: chrome.runtime.getURL('assets/football.png'),
-  url: chrome.runtime.getURL('assets/chant.wav')
-};
 
 interface Chant {
   url: string
@@ -29,13 +24,7 @@ type AudioState = 'not_started' | 'playing' | 'paused';
 
 function getState(callback: (state: TabState) => void) {
   console.log('Querying state');
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.tabs.sendMessage(
-      tabs[0].id as number,
-      { action: 'getState' },
-      callback
-    );
-  });
+  chrome.runtime.sendMessage({ action: 'getState' }, callback);
 }
 
 async function loadTeams(): Promise<Team[]> {
@@ -50,19 +39,9 @@ async function loadTeams(): Promise<Team[]> {
 }
 
 async function sendToActiveTab(message: any):Promise<any> {
-  return new Promise((resolve,reject) => {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (
-      tabs
-    ) {
-      chrome.tabs.sendMessage(
-        tabs[0].id as number,
-        message,
-        (response) => {
-          resolve(response);
-        }
-      );
-    });
-  })
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(message, resolve);
+  });
 }
 
 const App: React.FC = () => {
@@ -80,6 +59,7 @@ const App: React.FC = () => {
     if(teams.length>0) {
       getState((state) => {
         console.log(state)
+        if (!state) return;
         setSoundState(state.audioState);
         if(teams) {
           if(state.currentTeam) {
