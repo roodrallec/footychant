@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from "react"
+import React, {useState} from "react"
 import {useCombobox} from "downshift"
-import {comboboxStyles, menuStyles} from "./utils"
 
 export function DropdownCombobox({items, onChange}) {
   const [inputItems, setInputItems] = useState(items)
@@ -34,20 +33,15 @@ export function DropdownCombobox({items, onChange}) {
 
   return (
     <div>
-      <label {...getLabelProps()}>Select your team:</label>
-      <div style={comboboxStyles} {...getComboboxProps()}>
-        <input style={{width:"100px"}} {...getInputProps()} />
-        <button {...getToggleButtonProps()} aria-label="toggle menu">
-          Show all
-        </button>
+      <label {...getLabelProps()}><h4>Choose your team and listen to your favorite chants</h4></label>
+      <div {...getComboboxProps()}>
+        <input style={{width:"100%"}} {...getInputProps()} />
       </div>
-      <ul {...getMenuProps()} style={menuStyles}>
+      <ul className={"team-list"} {...getMenuProps()}>
         {isOpen &&
         inputItems.map((item, index) => (
           <li
-            style={
-              highlightedIndex === index ? {backgroundColor: "#bde4ff"} : {}
-            }
+            className={highlightedIndex === index ? "highlighted" : ""}
             key={`${item.name}${index}`}
             {...getItemProps({item, index})}
           >
