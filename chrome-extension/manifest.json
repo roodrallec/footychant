@@ -4,9 +4,7 @@
   "short_name": "Footy Chants",
   "version": "0.0.1",
   "description": "Listen to your favorite football chants while watching football.",
-  "permissions": [
-    "activeTab"
-  ],
+  "permissions": [],
   "browser_action": {
     "default_popup": "popup/index.html",
     "default_title": "Footy Chants"
