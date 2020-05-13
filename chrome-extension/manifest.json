@@ -14,23 +14,13 @@
   "icons": {
     "512": "./assets/football.png"
   },
-  "content_scripts": [
-    {
-      "js": [
-        "contentscript.js"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
-    }
-  ],
+  "content_scripts": [],
   "background": {
     "scripts": [
       "background.js"
     ],
     "persistent": false
   },
-  "content_security_policy": "script-src 'self' 'unsafe-eval' 'sha256-...='; object-src 'self'; media-src 'https://www.fanchants.com/';",
   "web_accessible_resources": [
     "https://www.fanchants.com/media/chants/full/download/*",
     "assets/chant.wav"
