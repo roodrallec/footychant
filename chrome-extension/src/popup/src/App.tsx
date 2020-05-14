@@ -151,7 +151,7 @@ const App: React.FC = () => {
         {team &&
         <>
           <div>
-            <span>You are listening to fan chants of </span>
+            <span>You are listening to</span>
             <h2 className="selected-team">{team.name}</h2>
             <a className="change-team" href={"#"} onClick={() => setTeam(undefined)}>Change team</a>
           </div>
