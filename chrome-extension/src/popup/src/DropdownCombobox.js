@@ -6,7 +6,6 @@ export function DropdownCombobox({items, onChange}) {
   const itemToString = (team) => team ? team.name : ''
   const {
     isOpen,
-    getToggleButtonProps,
     getLabelProps,
     getMenuProps,
     getInputProps,
@@ -45,7 +44,7 @@ export function DropdownCombobox({items, onChange}) {
             key={`${item.name}${index}`}
             {...getItemProps({item, index})}
           >
-            {item.name}
+            <img style={ { width: "1em", height: "1em" }} src={item.country.icon} alt={`${item.country.name}'s flag`} />{item.name}
           </li>
         ))}
       </ul>

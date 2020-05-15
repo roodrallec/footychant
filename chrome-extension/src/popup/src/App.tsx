@@ -13,8 +13,12 @@ interface Chant {
 
 interface Team {
   name: string
-  country?: string
-  chants: Chant[]
+  country: {
+    name: string,
+    icon: string
+  }
+  chants: Chant[],
+  icon: string
 }
 
 interface TabState {
@@ -52,7 +56,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     loadTeams().then(teams => {
-      setTeams(teams.sort((a, b) => a.name.localeCompare(b.name)))
+      setTeams(teams.map(team=>({...team, country: {...team.country, icon: chrome.extension.getURL("assets/country-icons/"+team.country.icon)}})).sort((a, b) => a.name.localeCompare(b.name)))
     })
   }, [])
 

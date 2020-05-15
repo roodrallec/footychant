@@ -22,6 +22,7 @@
   "content_security_policy": "script-src 'self'; object-src 'self'; media-src https://www.fanchants.com;",
   "web_accessible_resources": [
     "https://www.fanchants.com/media/chants/full/download/*",
-    "assets/chant.wav"
+    "./assets/chant.wav",
+    "./assets/country-icons/*"
   ]
 }

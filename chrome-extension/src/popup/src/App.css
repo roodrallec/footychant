@@ -21,15 +21,21 @@
   width: 100%;
   list-style: none;
   padding: 0;
+  text-align: left;
 }
 
 .team-list li {
   cursor: pointer;
   padding: 5px;
+  padding-left: 10px;
 }
 
 .team-list li.highlighted {
   background-color: #EEE;
+}
+
+.team-list li img {
+  margin-right: 10px;
 }
 
 .play-button-container {
