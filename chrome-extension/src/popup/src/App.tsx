@@ -56,7 +56,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     loadTeams().then(teams => {
-      setTeams(teams.map(team=>({...team, country: {...team.country, icon: chrome.extension.getURL("assets/country-icons/"+team.country.icon)}})).sort((a, b) => a.name.localeCompare(b.name)))
+      setTeams(teams.map(team=>({...team, country: {...team.country, icon: chrome.extension.getURL("assets/"+team.country.icon)}})).sort((a, b) => a.name.localeCompare(b.name)))
     })
   }, [])
 
