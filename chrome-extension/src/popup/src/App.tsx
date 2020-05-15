@@ -170,7 +170,7 @@ const App: React.FC = () => {
         }
       </div>
       <footer>
-        <a target="_blank" href={"https://www.buymeacoffee.com/Jorge"}>
+        <a target="_blank" href={"https://github.com/roodrallec/footychant"}>
           <GitHub/>
         </a>
       </footer>
