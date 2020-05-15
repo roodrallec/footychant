@@ -6,9 +6,9 @@ let mxChant; // Var to store currently playing mix chant
 let mxChants = []; // Array of all mix chants
 let mxContainer; // Mix chant audio container
 let mxContainerVol; // Volume for mix chant audio
-let bgContainer;
+let bgContainer; // Background chant audio container
 let bgChant = chrome.runtime.getURL('assets/chant.wav'); // Background chant audio
-let currentTeam = undefined;
+let currentTeam; // Current team selected
 
 function startBgContainer() {
   if (!bgContainer) {
@@ -89,8 +89,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       break;
     }
     case 'stop': {
-      bgContainer.pause();
       mxContainer.pause();
+      bgContainer.pause();
       sendResponse('ok');
       break;
     }
