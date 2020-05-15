@@ -1,8 +1,8 @@
 {
-  "name": "chrome-extension-with-react-and-typescript-starter-pack",
-  "version": "1.0.0",
-  "description": "Chrome Extension with React and Typescript Starter Pack",
-  "homepage": "https://github.com/thmsgbrt/Chrome-Extension-with-React-and-Typescript-Starter-Pack#readme",
+  "name": "footy-chants",
+  "version": "0.0.1",
+  "description":  "Listen to your favorite football chants while watching football.",
+  "homepage": "https://github.com/roodrallec/footychant/",
   "scripts": {
     "clean": "rm -rf dist && cpy manifest.json dist && cpy src/assets/* dist/assets",
     "prebuild": "npm run clean",
@@ -15,12 +15,9 @@
     "watch": "npm-run-all --parallel watch:*",
     "zip": "bestzip extension.zip dist/*"
   },
-  "bugs": {
-    "url": "https://github.com/thmsgbrt/Chrome-Extension-with-React-and-Typescript-Starter-Pack/issues"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thmsgbrt/Chrome-Extension-with-React-and-Typescript-Starter-Pack"
+    "url": "https://github.com/roodrallec/footychant/"
   },
   "keywords": [
     "chrome",
@@ -28,8 +25,8 @@
     "typescript",
     "react"
   ],
-  "author": "Guibert Thomas",
-  "license": "ISC",
+  "author": "Jorge Nicolas Alexander & Björn Wahle",
+  "license": "MIT",
   "devDependencies": {
     "@types/chrome": "0.0.91",
     "@types/node": "12.12.14",
