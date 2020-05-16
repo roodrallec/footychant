@@ -9,6 +9,7 @@ let mxContainerVol; // Volume for mix chant audio
 let bgContainer; // Background chant audio container
 let bgChant = chrome.runtime.getURL('assets/chant.wav'); // Background chant audio
 let currentTeam; // Current team selected
+let paused;
 
 function startBgContainer() {
   if (!bgContainer) {
@@ -53,6 +54,7 @@ function buildMxContainer() {
     mxChant = mxChants[getRandomInt(mxChants.length)];
     mxContainer.src = mxChant;
     setTimeout(() => {
+      if (paused) return;
       mxContainer.play();
     }, mxIntervalSecs * 1000);
   };
@@ -75,9 +77,9 @@ function updateChants(chantUrls: string[] = [], team: string) {
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  console.log(request);
   switch (request.action) {
     case 'start': {
+      paused = false;
       startBgContainer();
       if (request.chants) {
         updateChants(request.chants, request.team);
@@ -89,6 +91,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       break;
     }
     case 'stop': {
+      paused = true;
       mxContainer.pause();
       bgContainer.pause();
       sendResponse('ok');
@@ -99,7 +102,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (bgContainer.paused) {
           sendResponse({audioState: 'paused', currentTeam: currentTeam});
         } else {
-          console.log({audioState:'playing', currentTeam: currentTeam})
           sendResponse({audioState:'playing', currentTeam: currentTeam});
         }
       } else {
