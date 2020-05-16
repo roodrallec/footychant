@@ -2,6 +2,6 @@ node_modules
 .venv
 .vscode
 data
+.idea
 .ipynb_checkpoints
 node_modules/
-/.idea
