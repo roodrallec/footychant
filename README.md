@@ -1,9 +1,9 @@
-###### [Photo by Pixabay from Pexels]
-
-![Stadium](https://images.pexels.com/photos/270085/pexels-photo-270085.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260)
-
 # 🗣️ 📢 ⚽ Footy Chants!
 
+###### [Photo by Pixabay from Pexels]
+![Stadium](https://images.pexels.com/photos/270085/pexels-photo-270085.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260)
+
+## Description
 We created the Footy Chants extension for all the football fans out there who are missing the atmosphere from football games.
 
 ## Usage
