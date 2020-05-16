@@ -10,7 +10,11 @@
     "default_title": "Footy Chants"
   },
   "icons": {
-    "512": "./assets/football.png"
+    "16": "./assets/icon-16.png",
+    "32": "./assets/icon-32.png",
+    "48": "./assets/icon-48.png",
+    "128": "./assets/icon-128.png",
+    "512": "./assets/icon-512.png"
   },
   "content_scripts": [],
   "background": {
@@ -22,7 +26,6 @@
   "content_security_policy": "script-src 'self'; object-src 'self'; media-src https://www.fanchants.com;",
   "web_accessible_resources": [
     "https://www.fanchants.com/media/chants/full/download/*",
-    "./assets/chant.wav",
-    "./assets/country-icons/*"
+    "./assets/*"
   ]
 }
