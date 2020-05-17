@@ -24,6 +24,8 @@ function startBgContainer() {
       }
     });
   }
+  chrome.browserAction.setBadgeText({text: "On"})
+  chrome.browserAction.setBadgeBackgroundColor({color: "#00934e"})
   bgContainer.play();
 }
 
@@ -92,6 +94,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     }
     case 'stop': {
       paused = true;
+      chrome.browserAction.setBadgeText({text: ""})
       mxContainer.pause();
       bgContainer.pause();
       sendResponse('ok');
