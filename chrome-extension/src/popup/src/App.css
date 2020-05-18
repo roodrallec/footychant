@@ -48,7 +48,7 @@
   margin-bottom: 0.2em;
 }
 
-footer .MuiSvgIcon-root {
+footer .github-link .MuiSvgIcon-root {
   fill: currentColor;
   width: 12px;
   height: 12px;
@@ -64,8 +64,27 @@ footer .MuiSvgIcon-root {
 }
 
 footer {
-  text-align: right;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+footer .slider-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100px;
+  height: 35px;
+}
+
+footer .slider-container .slider-volume-icon {
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+footer .github-link {
   font-size: 12px;
+  align-self: flex-end;
 }
 
 input {
