@@ -110,12 +110,12 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     case 'getState': {
       if (bgContainer && mxChants.length>0) {
         if (bgContainer.paused) {
-          sendResponse({audioState: 'paused', currentTeam: currentTeam});
+          sendResponse({audioState: 'paused', volume: mxContainerVol, currentTeam: currentTeam});
         } else {
-          sendResponse({audioState:'playing', currentTeam: currentTeam});
+          sendResponse({audioState:'playing', volume: mxContainerVol, currentTeam: currentTeam});
         }
       } else {
-        sendResponse({audioState: 'not_started', currentTeam: undefined});
+        sendResponse({audioState: 'not_started', volume: mxContainerVol, currentTeam: undefined});
       }
     }
   }

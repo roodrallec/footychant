@@ -34,13 +34,13 @@ interface Team {
 
 interface TabState {
   audioState: AudioState,
+  volume: number
   currentTeam?: string
 }
 
 type AudioState = 'not_started' | 'playing' | 'paused';
 
 function getState(callback: (state: TabState) => void) {
-  console.log('Querying state')
   chrome.runtime.sendMessage({action: 'getState'}, callback)
 }
 
@@ -90,9 +90,9 @@ const App: React.FC = () => {
   useEffect(() => {
     if (teams.length > 0) {
       getState((state) => {
-        console.log(state)
         if (!state) return
         setSoundState(state.audioState)
+        setVolume(state.volume*100)
         if (teams) {
           if (state.currentTeam) {
             const team = teams.find(team => team.name === state.currentTeam)
@@ -109,7 +109,6 @@ const App: React.FC = () => {
 
 
   const startChants = async (team: Team) => {
-    console.log(team)
     const response = await sendToActiveTab({
       action: 'start',
       chants: team.chants.map(chant => chant.url),
