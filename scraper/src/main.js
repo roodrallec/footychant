@@ -60,7 +60,7 @@ async function scrapeAllLeagues() {
         await Promise.all(teamUrls.map(async teamUrl => {
             let [name, chants] = await scrapeChantsFromPage(baseUrl + teamUrl);
             data[league][teamUrl] = chants;
-            teams.push({name, country: leaguesCountries[league], chants: chants.map(chant=>({name:"",url:chant,icon:""}))});
+            teams.push({name, fanChantsUrl: baseUrl+teamUrl, country: leaguesCountries[league], chants: chants.map(chant=>({name:"",url:chant,icon:""}))});
         }));
     }));
     console.log(JSON.stringify(data));
