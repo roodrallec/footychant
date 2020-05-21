@@ -4,6 +4,7 @@
 .firebase/
 dist
 src/popup/build
+extension.zip
 # dependencies
 node_modules
 

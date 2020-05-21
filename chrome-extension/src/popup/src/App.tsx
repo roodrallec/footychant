@@ -1,7 +1,18 @@
 import React, {useEffect, useState} from 'react'
 import './App.css'
 import {DropdownCombobox} from "./DropdownCombobox"
-import {PlayArrow, Pause, GitHub} from '@material-ui/icons'
+import {PlayArrow, Pause, GitHub, VolumeUp} from '@material-ui/icons'
+import Slider from '@material-ui/core/Slider';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import grey from "@material-ui/core/colors/grey"
+import green from "@material-ui/core/colors/green"
+
+const theme = createMuiTheme({
+  palette: {
+    primary: green,
+    secondary: grey
+  }
+});
 
 const teamsUrl = chrome.runtime.getURL('assets/teams.json')
 
@@ -23,13 +34,13 @@ interface Team {
 
 interface TabState {
   audioState: AudioState,
+  volume: number
   currentTeam?: string
 }
 
 type AudioState = 'not_started' | 'playing' | 'paused';
 
 function getState(callback: (state: TabState) => void) {
-  console.log('Querying state')
   chrome.runtime.sendMessage({action: 'getState'}, callback)
 }
 
@@ -54,6 +65,22 @@ const App: React.FC = () => {
   const [soundState, setSoundState] = useState('loading')
   const [team, setTeam] = useState<Team>()
 
+  const [volume, setVolume] = React.useState(100);
+
+  const [volumeDisplayed, setVolumeDisplayed] = React.useState(false)
+
+  const toggleVolumeDisplay = () => {
+    setVolumeDisplayed(!volumeDisplayed)
+  }
+
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    sendToActiveTab({action: 'setVolume', volume: newValue}).then((response)=> {
+      if(response == 'ok') {
+        setVolume(newValue);
+      }
+    })
+  };
+
   useEffect(() => {
     loadTeams().then(teams => {
       setTeams(teams.map(team=>({...team, country: {...team.country, icon: chrome.extension.getURL("assets/"+team.country.icon)}})).sort((a, b) => a.name.localeCompare(b.name)))
@@ -63,9 +90,9 @@ const App: React.FC = () => {
   useEffect(() => {
     if (teams.length > 0) {
       getState((state) => {
-        console.log(state)
         if (!state) return
         setSoundState(state.audioState)
+        setVolume(state.volume*100)
         if (teams) {
           if (state.currentTeam) {
             const team = teams.find(team => team.name === state.currentTeam)
@@ -82,7 +109,6 @@ const App: React.FC = () => {
 
 
   const startChants = async (team: Team) => {
-    console.log(team)
     const response = await sendToActiveTab({
       action: 'start',
       chants: team.chants.map(chant => chant.url),
@@ -146,35 +172,48 @@ const App: React.FC = () => {
     return <div className="App">Loading...</div>
   }
 
+
+
   return (
-    <div className="App">
-      <div id="main-container">
-        {(teams.length > 0 && !team) &&
-        <DropdownCombobox items={teams} onChange={(team: Team) => startTeamChants(team)}/>
-        }
-        {team &&
-        <>
-          <div>
-            <span>You are listening to</span>
-            <h2 className="selected-team">{team.name}</h2>
-            <a className="change-team" href={"#"} onClick={() => setTeam(undefined)}>Change team</a>
+    <ThemeProvider theme={theme}>
+      <div className="App">
+        <div id="main-container">
+          {(teams.length > 0 && !team) &&
+          <DropdownCombobox items={teams} onChange={(team: Team) => startTeamChants(team)}/>
+          }
+          {team &&
+          <>
+            <div>
+              <span>You are listening to</span>
+              <h2 className="selected-team">{team.name}</h2>
+              <a className="change-team" href={"#"} onClick={() => setTeam(undefined)}>Change team</a>
+            </div>
+            <div className="play-button-container">
+              <button type="button" onClick={handleButtonClick}>
+                {soundState === 'not_started' || soundState === 'paused'
+                  ? <PlayArrow/>
+                  : <Pause/>}
+              </button>
+            </div>
+          </>
+          }
+        </div>
+        <footer>
+          <div className='slider-container'>
+            <a onClick={toggleVolumeDisplay}>
+              <VolumeUp className='slider-volume-icon'/>
+            </a>
+            {volumeDisplayed &&
+            <Slider color='secondary' value={volume} onChange={(ev, value) => handleChange(ev, value as number)}
+                    aria-labelledby="continuous-slider"/>
+            }
           </div>
-          <div className="play-button-container">
-            <button type="button" onClick={handleButtonClick}>
-              {soundState === 'not_started' || soundState === 'paused'
-                ? <PlayArrow/>
-                : <Pause/>}
-            </button>
-          </div>
-        </>
-        }
+          <a className='github-link' target="_blank" href={"https://github.com/roodrallec/footychant"}>
+            <GitHub/>
+          </a>
+        </footer>
       </div>
-      <footer>
-        <a target="_blank" href={"https://github.com/roodrallec/footychant"}>
-          <GitHub/>
-        </a>
-      </footer>
-    </div>
+    </ThemeProvider>
   )
 }
 

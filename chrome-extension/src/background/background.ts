@@ -5,7 +5,7 @@ const bgVolume = 1; // Volume to have the background chant at
 let mxChant; // Var to store currently playing mix chant
 let mxChants = []; // Array of all mix chants
 let mxContainer; // Mix chant audio container
-let mxContainerVol; // Volume for mix chant audio
+let mxContainerVol = 1; // Volume for mix chant audio
 let bgContainer; // Background chant audio container
 let bgChant = chrome.runtime.getURL('assets/chant.wav'); // Background chant audio
 let currentTeam; // Current team selected
@@ -40,15 +40,15 @@ function buildMxContainer() {
   mxContainer.addEventListener('timeupdate', function () {
     if (this.currentTime <= mxFadeSecs) {
       // Fade in
-      this.volume = this.currentTime / mxFadeSecs;
+      this.volume = mxContainerVol * (this.currentTime / mxFadeSecs);
     } else if (
       this.currentTime < this.duration &&
       this.currentTime > this.duration - mxFadeSecs
     ) {
       // Fade out
-      this.volume = (this.duration - this.currentTime) / mxFadeSecs;
+      this.volume = mxContainerVol * ((this.duration - this.currentTime) / mxFadeSecs);
     } else {
-      this.volume = 1;
+      this.volume = mxContainerVol;
     }
   });
   mxContainer.onended = () => {
@@ -78,6 +78,11 @@ function updateChants(chantUrls: string[] = [], team: string) {
   document.body.appendChild(mxContainer);
 }
 
+function setVolume(volume: any) {
+  mxContainerVol = volume / 100;
+  bgContainer.volume = volume / 100;
+}
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   switch (request.action) {
     case 'start': {
@@ -100,15 +105,20 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       sendResponse('ok');
       break;
     }
+    case 'setVolume': {
+      setVolume(request.volume)
+      sendResponse('ok')
+      break;
+    }
     case 'getState': {
       if (bgContainer && mxChants.length>0) {
         if (bgContainer.paused) {
-          sendResponse({audioState: 'paused', currentTeam: currentTeam});
+          sendResponse({audioState: 'paused', volume: mxContainerVol, currentTeam: currentTeam});
         } else {
-          sendResponse({audioState:'playing', currentTeam: currentTeam});
+          sendResponse({audioState:'playing', volume: mxContainerVol, currentTeam: currentTeam});
         }
       } else {
-        sendResponse({audioState: 'not_started', currentTeam: undefined});
+        sendResponse({audioState: 'not_started', volume: mxContainerVol, currentTeam: undefined});
       }
     }
   }
