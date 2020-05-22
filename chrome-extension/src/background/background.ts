@@ -97,11 +97,13 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       startBgContainer();
       if (request.chants) {
         updateChants(request.chants, request.team);
-        sendResponse('ok');
       } else if (mxChants.length > 0) {
         mxContainer.play();
-        sendResponse('ok');
       }
+      sendResponse({
+        status: 'ok',
+        chant: mxChant
+      });
       break;
     }
     case 'stop': {
@@ -119,6 +121,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     }
     case 'skipChant': {
       nextChant();
+      setChantTimeout();
       sendResponse({
         status: 'ok',
         chant: mxChant

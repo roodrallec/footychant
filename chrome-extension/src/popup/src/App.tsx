@@ -145,6 +145,7 @@ const App: React.FC = () => {
       team: team.name,
     });
     if (response) {
+      setCurrentChant(response.chant || '');
       setSoundState('playing');
       return true;
     } else {
@@ -206,10 +207,10 @@ const App: React.FC = () => {
   };
 
   const startTeamChants = (team: Team) => {
-    setCurrentChant('');
     if (team) {
       startChants(team).then((started) => started && setTeam(team));
     } else {
+      setCurrentChant('');
       pauseAudio();
     }
   };
