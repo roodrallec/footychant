@@ -5,11 +5,13 @@ import {PlayArrow, Pause, GitHub, VolumeUp} from '@material-ui/icons'
 import Slider from '@material-ui/core/Slider';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import grey from "@material-ui/core/colors/grey"
-import green from "@material-ui/core/colors/green"
+import {Box, Button, Link, Typography} from "@material-ui/core"
 
 const theme = createMuiTheme({
   palette: {
-    primary: green,
+    primary: {
+      main: '#1b5e20',
+    },
     secondary: grey
   }
 });
@@ -27,7 +29,8 @@ interface Team {
   country: {
     name: string,
     icon: string
-  }
+  },
+  fanChantsUrl: string,
   chants: Chant[],
   icon: string
 }
@@ -55,7 +58,7 @@ async function loadTeams(): Promise<Team[]> {
 }
 
 async function sendToActiveTab(message: any): Promise<any> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     chrome.runtime.sendMessage(message, resolve)
   })
 }
@@ -75,7 +78,7 @@ const App: React.FC = () => {
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     sendToActiveTab({action: 'setVolume', volume: newValue}).then((response)=> {
-      if(response == 'ok') {
+      if(response === 'ok') {
         setVolume(newValue);
       }
     })
@@ -183,32 +186,45 @@ const App: React.FC = () => {
           }
           {team &&
           <>
-            <div>
-              <span>You are listening to</span>
-              <h2 className="selected-team">{team.name}</h2>
-              <a className="change-team" href={"#"} onClick={() => setTeam(undefined)}>Change team</a>
-            </div>
-            <div className="play-button-container">
-              <button type="button" onClick={handleButtonClick}>
+            <Box>
+              <Typography variant='h5'>You are listening to</Typography>
+              <Typography variant='h4'>{team.name}</Typography>
+              <Link href={"#"} onClick={() => setTeam(undefined)}>Change team</Link>
+            </Box>
+            <Box className='play-button-container'>
+              <Button variant='contained' color='primary' onClick={handleButtonClick}>
                 {soundState === 'not_started' || soundState === 'paused'
                   ? <PlayArrow/>
                   : <Pause/>}
-              </button>
-            </div>
+              </Button>
+            </Box>
+            <Box>
+              <Link target='_blank' rel='noopener' href={team.fanChantsUrl} >See all {team.name} chants on fanchants.com</Link>
+            </Box>
           </>
           }
         </div>
         <footer>
-          <div className='slider-container'>
-            <a onClick={toggleVolumeDisplay}>
-              <VolumeUp className='slider-volume-icon'/>
-            </a>
-            {volumeDisplayed &&
-            <Slider color='secondary' value={volume} onChange={(ev, value) => handleChange(ev, value as number)}
-                    aria-labelledby="continuous-slider"/>
-            }
-          </div>
-          <a className='github-link' target="_blank" href={"https://github.com/roodrallec/footychant"}>
+          <Box>
+            <div className='slider-container'>
+              <Button onClick={toggleVolumeDisplay}>
+                <VolumeUp className='slider-volume-icon'/>
+              </Button>
+              {volumeDisplayed &&
+              <Slider color='secondary' value={volume} onChange={(ev, value) => handleChange(ev, value as number)}
+                      aria-labelledby="continuous-slider"/>
+              }
+            </div>
+            <Box style={{textAlign: "left"}}>
+              <span>Chants by</span>
+              <br/>
+              <a rel="noopener noreferrer" href='https://fanchants.com' target="_blank">
+                <img alt={"FanChants.com logo"} height='30' src="/assets/fanchants-logo.svg" />
+              </a>
+            </Box>
+
+          </Box>
+          <a rel="noopener noreferrer" className='github-link' target="_blank" href={"https://github.com/roodrallec/footychant"}>
             <GitHub/>
           </a>
         </footer>

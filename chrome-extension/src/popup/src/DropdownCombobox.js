@@ -1,11 +1,15 @@
 import React, {useState} from "react"
 import {useCombobox} from "downshift"
+import Box from "@material-ui/core/Box"
+import Input from "@material-ui/core/Input"
+import List from "@material-ui/core/List"
+import ListItem from "@material-ui/core/ListItem"
+import Typography from "@material-ui/core/Typography"
 
 export function DropdownCombobox({items, onChange}) {
   const [inputItems, setInputItems] = useState(items)
   const itemToString = (team) => team ? team.name : ''
   const {
-    isOpen,
     getLabelProps,
     getMenuProps,
     getInputProps,
@@ -31,23 +35,22 @@ export function DropdownCombobox({items, onChange}) {
   })
 
   return (
-    <div>
-      <label {...getLabelProps()}><h4>Choose your team and listen to your favorite chants</h4></label>
+    <Box>
+      <Typography variant='h5' {...getLabelProps()}>Choose your team and listen to your favorite chants</Typography>
       <div {...getComboboxProps()}>
-        <input style={{width:"100%"}} {...getInputProps()} />
+        <Input placeholder='Type to search' style={{width:"100%"}} {...getInputProps({refKey: 'inputRef'})} />
       </div>
-      <ul className={"team-list"} {...getMenuProps()}>
-        {isOpen &&
-        inputItems.map((item, index) => (
-          <li
+      <List className={"team-list"} {...getMenuProps()}>
+        {inputItems.map((item, index) => (
+          <ListItem
             className={highlightedIndex === index ? "highlighted" : ""}
             key={`${item.name}${index}`}
             {...getItemProps({item, index})}
           >
             <img style={ { width: "1em", height: "1em" }} src={item.country.icon} alt={`${item.country.name}'s flag`} />{item.name}
-          </li>
+          </ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Box>
   )
 }
