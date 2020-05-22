@@ -3,6 +3,7 @@ const mxFadeSecs = 5; // Seconds to fade in/out mix chant to max/min volume
 const bgVolume = 1; // Volume to have the background chant at
 
 let mxChant; // Var to store currently playing mix chant
+let mxChantTimeout;
 let mxChants = []; // Array of all mix chants
 let mxContainer; // Mix chant audio container
 let mxContainerVol = 1; // Volume for mix chant audio
@@ -24,8 +25,8 @@ function startBgContainer() {
       }
     });
   }
-  chrome.browserAction.setBadgeText({text: "On"})
-  chrome.browserAction.setBadgeBackgroundColor({color: "#00934e"})
+  chrome.browserAction.setBadgeText({ text: 'On' });
+  chrome.browserAction.setBadgeBackgroundColor({ color: '#00934e' });
   bgContainer.play();
 }
 
@@ -46,20 +47,26 @@ function buildMxContainer() {
       this.currentTime > this.duration - mxFadeSecs
     ) {
       // Fade out
-      this.volume = mxContainerVol * ((this.duration - this.currentTime) / mxFadeSecs);
+      this.volume =
+        mxContainerVol * ((this.duration - this.currentTime) / mxFadeSecs);
     } else {
       this.volume = mxContainerVol;
     }
   });
-  mxContainer.onended = () => {
-    if (mxChants.length == 0) return;
-    mxChant = mxChants[getRandomInt(mxChants.length)];
-    mxContainer.src = mxChant;
-    setTimeout(() => {
-      if (paused) return;
-      mxContainer.play();
-    }, mxIntervalSecs * 1000);
-  };
+  mxContainer.onended = setChantTimeout;
+}
+
+function setChantTimeout() {
+  mxChantTimeout = setTimeout(() => {
+    nextChant();
+  }, mxIntervalSecs * 1000);
+}
+
+function nextChant() {
+  if (paused || mxChants.length == 0 || !mxContainer) return;
+  mxChant = mxChants[getRandomInt(mxChants.length)];
+  mxContainer.src = mxChant;
+  mxContainer.play();
 }
 
 function updateChants(chantUrls: string[] = [], team: string) {
@@ -91,7 +98,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       if (request.chants) {
         updateChants(request.chants, request.team);
         sendResponse('ok');
-      } else if(mxChants.length>0) {
+      } else if (mxChants.length > 0) {
         mxContainer.play();
         sendResponse('ok');
       }
@@ -99,26 +106,49 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     }
     case 'stop': {
       paused = true;
-      chrome.browserAction.setBadgeText({text: ""})
+      chrome.browserAction.setBadgeText({ text: '' });
       mxContainer.pause();
       bgContainer.pause();
       sendResponse('ok');
       break;
     }
     case 'setVolume': {
-      setVolume(request.volume)
-      sendResponse('ok')
+      setVolume(request.volume);
+      sendResponse('ok');
+      break;
+    }
+    case 'skipChant': {
+      nextChant();
+      sendResponse({
+        status: 'ok',
+        chant: mxChant
+      });
       break;
     }
     case 'getState': {
-      if (bgContainer && mxChants.length>0) {
+      if (bgContainer && mxChants.length > 0) {
         if (bgContainer.paused) {
-          sendResponse({audioState: 'paused', volume: mxContainerVol, currentTeam: currentTeam});
+          sendResponse({
+            audioState: 'paused',
+            volume: mxContainerVol,
+            currentTeam: currentTeam,
+            currentChant: mxChant
+          });
         } else {
-          sendResponse({audioState:'playing', volume: mxContainerVol, currentTeam: currentTeam});
+          sendResponse({
+            audioState: 'playing',
+            volume: mxContainerVol,
+            currentTeam: currentTeam,
+            currentChant: mxChant
+          });
         }
       } else {
-        sendResponse({audioState: 'not_started', volume: mxContainerVol, currentTeam: undefined});
+        sendResponse({
+          audioState: 'not_started',
+          volume: mxContainerVol,
+          currentTeam: undefined,
+          currentChant: undefined
+        });
       }
     }
   }

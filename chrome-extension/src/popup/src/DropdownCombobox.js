@@ -36,7 +36,7 @@ export function DropdownCombobox({items, onChange}) {
 
   return (
     <Box>
-      <Typography variant='h5' {...getLabelProps()}>Choose your team and listen to your favorite chants</Typography>
+      <Typography variant='h5' {...getLabelProps()}>Choose your team</Typography>
       <div {...getComboboxProps()}>
         <Input placeholder='Type to search' style={{width:"100%"}} {...getInputProps({refKey: 'inputRef'})} />
       </div>
