@@ -36,10 +36,22 @@ const leaguesCountries = {
 async function scrapeChantsFromPage(url) {
     const html = await axios.get(url);
     const page = $.load(html.data);
-    const chantContainers = page('#all-chants [data-has-audio=True] .play-button');
+    const playButtons = page('#all-chants [data-has-audio=True] .play-button');
+    const chantContainers = page('#all-chants [data-has-audio=True]');
+    const chantLinks= page('#all-chants [data-has-audio=True] .chant_title p a');
     const name = page('#pjax-container > div > div:nth-child(3) > div > section > h2').text().replace("Fan's Songs", "").trim();
-    const relativeUrls = chantContainers.map(function(el,i) {return $(this).attr("href")}).get();
-    return [name, relativeUrls.map(el => baseUrl + el)];
+    const relativeUrls = playButtons.map(function(el,i) {return $(this).attr("href")}).get();
+    const chantNames = chantContainers.map(function(el,i) {return $(this).attr("data-chant-title")}).get();
+    const chantUrls = chantLinks.map(function(el,i) {return $(this).attr("href")}).get();
+    const chants = []
+    for(let i=0; i<relativeUrls.length;i++) {
+        chants.push({
+            name: chantNames[i],
+            url: baseUrl+relativeUrls[i],
+            chantUrl: baseUrl+chantUrls[i].trim()
+        })
+    }
+    return [name, chants];
 }
 
 async function scrapeChantsFromLeague(leagueUrl) {
@@ -52,18 +64,14 @@ async function scrapeChantsFromLeague(leagueUrl) {
 }
 
 async function scrapeAllLeagues() {
-    const data = {};
     const teams = [];
     await Promise.all(leagues.map(async league => {
-        data[league] = {};
         const teamUrls = await scrapeChantsFromLeague(baseUrl + league);
         await Promise.all(teamUrls.map(async teamUrl => {
             let [name, chants] = await scrapeChantsFromPage(baseUrl + teamUrl);
-            data[league][teamUrl] = chants;
-            teams.push({name, fanChantsUrl: baseUrl+teamUrl, country: leaguesCountries[league], chants: chants.map(chant=>({name:"",url:chant,icon:""}))});
+            teams.push({name, fanChantsUrl: baseUrl+teamUrl, country: leaguesCountries[league], chants: chants});
         }));
     }));
-    console.log(JSON.stringify(data));
     fs.writeFile("../../chrome-extension/src/assets/teams.json", JSON.stringify(teams), err => {
         if (err) {
             console.error(err)

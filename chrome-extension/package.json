@@ -1,7 +1,7 @@
 {
   "name": "footy-chants",
   "version": "0.0.1",
-  "description":  "Listen to your favorite football chants while watching football.",
+  "description": "Listen to your favorite football chants while watching football.",
   "homepage": "https://github.com/roodrallec/footychant/",
   "scripts": {
     "clean": "rm -rf dist && cpy manifest.json dist && cpy src/assets/* dist/assets",

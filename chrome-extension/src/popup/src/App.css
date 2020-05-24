@@ -42,6 +42,11 @@
   margin-bottom: 1.2em;
 }
 
+.control {
+  display: block;
+  text-align: center;
+}
+
 .selected-team {
   margin-top: 0.5em;
   font-size: 1.5em;

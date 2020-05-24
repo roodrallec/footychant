@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Footy Chants",
   "short_name": "Footy Chants",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "homepage_url": "https://github.com/roodrallec/footychant",
   "description": "Listen to your favorite football chants while watching football.",
   "permissions": [],
