@@ -274,7 +274,7 @@ const App: React.FC = () => {
               </Box>
               {currentChant && (
                 <Box>
-                  <Typography variant="h6" className='chant-name'>
+                  <Typography variant="h5" className='chant-name'>
                     {currentChant.name}
                   </Typography>
                   <br />
