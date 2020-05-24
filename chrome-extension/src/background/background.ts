@@ -36,7 +36,7 @@ function getRandomInt(max: number) {
 
 function buildMxContainer() {
   mxChant = mxChants[getRandomInt(mxChants.length)];
-  mxContainer = new Audio(mxChant);
+  mxContainer = new Audio(mxChant.url);
   mxContainer.volume = 0;
   mxContainer.addEventListener('timeupdate', function () {
     if (this.currentTime <= mxFadeSecs) {
@@ -65,7 +65,7 @@ function setChantTimeout() {
 function nextChant() {
   if (paused || mxChants.length == 0 || !mxContainer) return;
   mxChant = mxChants[getRandomInt(mxChants.length)];
-  mxContainer.src = mxChant;
+  mxContainer.src = mxChant.url;
   mxContainer.play();
 }
 
@@ -78,7 +78,7 @@ function updateChants(chantUrls: string[] = [], team: string) {
   if (currentTeam && currentTeam != team) {
     mxContainer.pause();
     mxChant = mxChants[getRandomInt(mxChants.length)];
-    mxContainer.src = mxChant;
+    mxContainer.src = mxChant.url;
   }
   currentTeam = team;
   mxContainer.play();

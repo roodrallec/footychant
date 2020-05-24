@@ -14,14 +14,6 @@
   width: 100%;
 }
 
-.team-name {
-  text-align: left;
-}
-
-.chant-name {
-  text-align: left;
-}
-
 .team-list {
   max-height: 200px;
   overflow-y: auto;

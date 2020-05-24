@@ -17,7 +17,7 @@ import {
 import Slider from '@material-ui/core/Slider';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import grey from '@material-ui/core/colors/grey';
-import { Box, Button, Grid, Link, Typography } from '@material-ui/core';
+import {Box, Button, CircularProgress, Grid, Link, Typography} from '@material-ui/core';
 
 const theme = createMuiTheme({
   palette: {
@@ -31,8 +31,8 @@ const theme = createMuiTheme({
 const teamsUrl = chrome.runtime.getURL('assets/teams.json');
 
 interface Chant {
+  chantUrl: string;
   url: string;
-  icon: string;
   name: string;
 }
 
@@ -51,7 +51,7 @@ interface TabState {
   audioState: AudioState;
   volume: number;
   currentTeam?: string;
-  currentChant?: string;
+  currentChant?: Chant;
 }
 
 type AudioState = 'not_started' | 'playing' | 'paused';
@@ -80,7 +80,7 @@ const App: React.FC = () => {
   let [teams, setTeams] = useState<Team[]>([]);
   const [soundState, setSoundState] = useState('loading');
   const [team, setTeam] = useState<Team>();
-  const [currentChant, setCurrentChant] = React.useState('');
+  const [currentChant, setCurrentChant] = useState<Chant>();
 
   const [volume, setVolume] = React.useState(100);
 
@@ -122,6 +122,7 @@ const App: React.FC = () => {
         if (!state) return;
         setSoundState(state.audioState);
         setVolume(state.volume * 100);
+        console.log(state)
         if (state.currentChant) setCurrentChant(state.currentChant);
         if (teams) {
           if (state.currentTeam) {
@@ -140,7 +141,7 @@ const App: React.FC = () => {
   const startChants = async (team: Team) => {
     const response = await sendToActiveTab({
       action: 'start',
-      chants: team.chants.map((chant) => chant.url),
+      chants: team.chants,
       loop: true,
       team: team.name,
     });
@@ -160,15 +161,6 @@ const App: React.FC = () => {
     if (response && response.status === 'ok') {
       setCurrentChant(response.chant);
     }
-  };
-
-  const chantNameRegex = /(?:.+\/)(.*)-fanchants-free/;
-
-  const chantName = (chantUrl: string) => {
-    if (!chantUrl) return '...';
-    const found = chantUrl.match(chantNameRegex);
-    const name = found && found[1] ? found[1].replace(/-/g, ' ') : '';
-    return name.charAt(0).toUpperCase() + name.slice(1);
   };
 
   const pauseAudio = () => {
@@ -210,13 +202,15 @@ const App: React.FC = () => {
     if (team) {
       startChants(team).then((started) => started && setTeam(team));
     } else {
-      setCurrentChant('');
+      setCurrentChant(null);
       pauseAudio();
     }
   };
 
   if (soundState === 'loading') {
-    return <div className="App">Loading...</div>;
+    return <div className="App">
+      <CircularProgress/>
+    </div>;
   }
 
   return (
@@ -232,21 +226,27 @@ const App: React.FC = () => {
           {team && (
             <>
               <Box>
+                <Box style={{textAlign:'center'}}>
+                  <Typography variant="h5" className={'team-name'}>
+                    You are listening to:
+                  </Typography>
+                  <Typography variant="h4" className={'team-name'}>
+                    {team.name}
+                  </Typography>
+                </Box>
                 <Grid
                   container
                   direction="row"
                   justify="space-between"
                   alignItems="flex-end"
                 >
-                  <Typography variant="h4" className={'team-name'}>
-                    {team.name}
-                  </Typography>
                   <Link
                     href={'#'}
                     onClick={() => setTeam(undefined)}
                     className="control"
                   >
                     <Repeat />
+                    <Typography>Change team</Typography>
                   </Link>
                   <Link
                     href={'#'}
@@ -254,29 +254,33 @@ const App: React.FC = () => {
                     className="control"
                   >
                     {soundState === 'not_started' || soundState === 'paused' ? (
-                      <PlayArrow />
+                      <>
+                        <PlayArrow />
+                        <Typography>Play</Typography>
+                      </>
                     ) : (
-                      <Pause />
+                      <>
+                        <Pause />
+                        <Typography>Pause</Typography>
+                      </>
                     )}
                   </Link>
                   <Link href={'#'} onClick={skipChant} className="control">
                     <SkipNext />
+                    <Typography>Skip chant</Typography>
                   </Link>
                 </Grid>
                 <br />
               </Box>
               {currentChant && (
                 <Box>
-                  <Typography variant="h5" className={'team-name'}>
-                    You are listening to:
-                  </Typography>
-                  <Typography variant="h5" className={'chant-name'}>
-                    {chantName(currentChant)}
+                  <Typography variant="h6" className='chant-name'>
+                    {currentChant.name}
                   </Typography>
                   <br />
                 </Box>
               )}
-              <Box style={{ textAlign: 'left' }}>
+              <Box>
                 <Grid
                   container
                   direction="row"
