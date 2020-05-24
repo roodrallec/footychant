@@ -2,15 +2,11 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import { DropdownCombobox } from './DropdownCombobox';
 import {
-  Apple,
-  Contactless,
-  Facebook,
   GitHub,
   PlayArrow,
   Pause,
   Repeat,
   SkipNext,
-  Twitter,
   VolumeUp,
 } from '@material-ui/icons';
 import Slider from '@material-ui/core/Slider';
@@ -153,6 +149,14 @@ const App: React.FC = () => {
     }
   };
 
+  chrome.runtime.onMessage.addListener((request, sender, cb) => {
+    switch (request.action) {
+      case 'chantUpdate': {
+        setCurrentChant(request.chant);
+      }
+    }
+  });
+
   const skipChant = async () => {
     const response = await sendToActiveTab({
       action: 'skipChant',
@@ -233,6 +237,7 @@ const App: React.FC = () => {
                     {team.name}
                   </Typography>
                 </Box>
+                <br />
                 <Grid
                   container
                   direction="row"
@@ -276,16 +281,15 @@ const App: React.FC = () => {
                   <Typography variant="h5" className='chant-name'>
                     {currentChant.name}
                   </Typography>
-                  <br />
                 </Box>
               )}
               <Box>
                 <Grid
                   container
-                  direction="row"
+                  direction="column"
                   justify="space-between"
-                  alignItems="flex-end"
                 >
+                  <p>Chant provided by</p>
                   <a
                     rel="noopener noreferrer"
                     href="https://fanchants.com"
@@ -297,34 +301,6 @@ const App: React.FC = () => {
                       src="/assets/fanchants-logo.svg"
                     />
                   </a>
-                  <Link
-                    target="_blank"
-                    rel="noopener"
-                    href="https://fanchants.com"
-                  >
-                    <Facebook />
-                  </Link>
-                  <Link
-                    target="_blank"
-                    rel="noopener"
-                    href="https://fanchants.com"
-                  >
-                    <Twitter />
-                  </Link>
-                  <Link
-                    target="_blank"
-                    rel="noopener"
-                    href="https://fanchants.com"
-                  >
-                    <Contactless />
-                  </Link>
-                  <Link
-                    target="_blank"
-                    rel="noopener"
-                    href="https://fanchants.com"
-                  >
-                    <Apple />
-                  </Link>
                 </Grid>
               </Box>
             </>

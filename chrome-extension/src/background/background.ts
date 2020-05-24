@@ -60,6 +60,11 @@ function setChantTimeout() {
   if (mxChantTimeout) clearTimeout(mxChantTimeout);
   mxChantTimeout = setTimeout(() => {
     nextChant();
+    if (!mxChant) return;
+    chrome.runtime.sendMessage({
+      action: 'chantUpdate',
+      chant: mxChant
+    });
   }, mxIntervalSecs * 1000);
 }
 
