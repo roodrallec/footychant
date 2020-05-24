@@ -12,7 +12,6 @@ import {
   SkipNext,
   Twitter,
   VolumeUp,
-  ChangeHistoryTwoTone,
 } from '@material-ui/icons';
 import Slider from '@material-ui/core/Slider';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -202,7 +201,7 @@ const App: React.FC = () => {
     if (team) {
       startChants(team).then((started) => started && setTeam(team));
     } else {
-      setCurrentChant(null);
+      setCurrentChant(undefined);
       pauseAudio();
     }
   };

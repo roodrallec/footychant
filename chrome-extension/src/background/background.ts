@@ -57,6 +57,7 @@ function buildMxContainer() {
 }
 
 function setChantTimeout() {
+  if (mxChantTimeout) clearTimeout(mxChantTimeout);
   mxChantTimeout = setTimeout(() => {
     nextChant();
   }, mxIntervalSecs * 1000);
@@ -66,6 +67,7 @@ function nextChant() {
   if (paused || mxChants.length == 0 || !mxContainer) return;
   mxChant = mxChants[getRandomInt(mxChants.length)];
   mxContainer.src = mxChant.url;
+  mxContainer.onended = setChantTimeout;
   mxContainer.play();
 }
 
@@ -121,7 +123,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     }
     case 'skipChant': {
       nextChant();
-      setChantTimeout();
       sendResponse({
         status: 'ok',
         chant: mxChant
