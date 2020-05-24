@@ -163,6 +163,7 @@ const App: React.FC = () => {
     });
     if (response && response.status === 'ok') {
       setCurrentChant(response.chant);
+      setSoundState('playing');
     }
   };
 

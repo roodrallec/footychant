@@ -10,7 +10,6 @@ let mxContainerVol = 1; // Volume for mix chant audio
 let bgContainer; // Background chant audio container
 let bgChant = chrome.runtime.getURL('assets/chant.wav'); // Background chant audio
 let currentTeam; // Current team selected
-let paused;
 
 function startBgContainer() {
   if (!bgContainer) {
@@ -69,7 +68,7 @@ function setChantTimeout() {
 }
 
 function nextChant() {
-  if (paused || mxChants.length == 0 || !mxContainer) return;
+  if (mxChants.length == 0 || !mxContainer) return;
   mxChant = mxChants[getRandomInt(mxChants.length)];
   mxContainer.src = mxChant.url;
   mxContainer.onended = setChantTimeout;
@@ -100,7 +99,6 @@ function setVolume(volume: any) {
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   switch (request.action) {
     case 'start': {
-      paused = false;
       startBgContainer();
       if (request.chants) {
         updateChants(request.chants, request.team);
@@ -114,8 +112,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       break;
     }
     case 'stop': {
-      paused = true;
       chrome.browserAction.setBadgeText({ text: '' });
+      if (mxChantTimeout) clearTimeout(mxChantTimeout);
       mxContainer.pause();
       bgContainer.pause();
       sendResponse('ok');
