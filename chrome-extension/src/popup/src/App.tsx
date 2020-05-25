@@ -284,13 +284,8 @@ const App: React.FC = () => {
                   </Typography>
                 </Box>
               )}
-              <Box>
-                <Grid
-                  container
-                  direction="column"
-                  justify="space-between"
-                >
-                  <p>Chant provided by</p>
+              <Box className='fanchants-container'>
+                  <Typography>Chant provided by</Typography>
                   <a
                     rel="noopener noreferrer"
                     href="https://fanchants.com"
@@ -302,7 +297,6 @@ const App: React.FC = () => {
                       src="/assets/fanchants-logo.svg"
                     />
                   </a>
-                </Grid>
               </Box>
             </>
           )}

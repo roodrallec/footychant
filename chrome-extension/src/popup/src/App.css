@@ -68,6 +68,10 @@ footer .github-link .MuiSvgIcon-root {
   font-size: 0.8em;
 }
 
+.fanchants-container {
+  margin-top: 1em;
+}
+
 footer {
   margin-top: 0.5em;
   display: flex;
